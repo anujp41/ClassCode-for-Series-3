@@ -1,5 +1,6 @@
 'use strict';
 const fs = require('fs');
+const util = require('util');
 
 // Based on Knuth; per wikipedia
 // Takes the Poisson rate and output a Poisson rv
@@ -19,7 +20,7 @@ function poissonGenerator(lambda) {
 // Creates rate parameter given by 120/lambda
 // As max T is 120, we take this as numerator to generator rate parameter
 function nextEventTimeGenerator(lambda) {
-  return Math.floor(-Math.log(Math.random()) / (1 / lambda));
+  return Math.floor(-Math.log(1 - Math.random()) / (1 / lambda));
 }
 
 // Sample space properties
@@ -50,8 +51,11 @@ const eventSpace = [
   }
 ];
 
+const eventCounter = {};
+
 function runSimulation(simulationRound) {
   const fileName = `Simulation#${simulationRound}.csv`;
+  eventCounter[simulationRound] = {};
 
   const colHeaders =
     'TimeRemaining,Event,BicyclesTaken,BikeRemaining,CurrentProfit';
@@ -77,8 +81,15 @@ function runSimulation(simulationRound) {
      */
     const randEventIdx = Math.ceil(Math.random() * 4);
     const randEvent = eventSpace[randEventIdx - 1];
+    if (eventCounter[simulationRound]) {
+      eventCounter[simulationRound]++;
+    } else {
+      eventCounter[simulationRound] = 1;
+    }
     const nextEventArrival = nextEventTimeGenerator(randEvent.rate);
     timeRemaining -= nextEventArrival;
+
+    if (timeRemaining < 0) break;
 
     if (randEventIdx === 4) {
       const bicyclesReturned = poissonGenerator(randEvent.rate);
@@ -114,3 +125,5 @@ function runSimulation(simulationRound) {
 for (let i = 1; i <= 5; i++) {
   runSimulation(i);
 }
+
+console.log(util.inspect(eventCounter, { showHidden: false, depth: null }));
