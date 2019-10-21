@@ -50,7 +50,7 @@ event_space = [
 
 
 def run_simulation(simulation_round):
-    file_name = f'DES-Simulation#{simulation_round}.csv'
+    file_name = f'DES_Retro-Simulation#{simulation_round}.csv'
     if (os.path.exists(file_name)):
         os.remove(file_name)
 
@@ -59,6 +59,7 @@ def run_simulation(simulation_round):
     col_headers = 'TimeRemaining,Event,BicyclesTaken,BikeRemaining,CurrentProfit'
 
     total_time = 120
+    lambda_sum = 14
     amount_in_hand = (event_space[0]['fixedFee'] * event_space[0]['rate'] +
                       event_space[1]['fixedFee'] * event_space[1]['rate']) * total_time
     current_num_of_bicycles = 10
@@ -70,7 +71,7 @@ def run_simulation(simulation_round):
 
     for i in range(len(event_space)):
         for c in range(total_time):
-            inter_arrival = inter_arrival_time(event_space[i]['rate'])
+            inter_arrival = inter_arrival_time(lambda_sum)
             event_arrivals += [(i + 1, c + inter_arrival)]
 
     sorted_arrivals = sorted(event_arrivals, key=lambda i: i[1], reverse=True)
