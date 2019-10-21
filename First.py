@@ -50,7 +50,7 @@ event_space = [
 
 
 def run_simulation(simulation_round):
-    file_name = f'DES-Simulation#{simulation_round}.csv'
+    file_name = f'csv_output/DES-Simulation#{simulation_round}.csv'
     if (os.path.exists(file_name)):
         os.remove(file_name)
 
